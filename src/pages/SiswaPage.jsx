@@ -109,20 +109,44 @@ export default function SiswaPage() {
     };
 
     const handleOpenDeleteModal = (siswa) => {
+        if (!siswa || !siswa.id) {
+            console.error('Data siswa tidak valid:', siswa);
+            return;
+        }
         setSiswaToDelete(siswa);
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
-        if (!siswaToDelete) return;
+        if (!siswaToDelete?.id) {
+            console.error('ID siswa tidak ditemukan:', siswaToDelete);
+            return;
+        }
+    
         try {
+            setLoading(true);
+            setErrorMsg('');
+    
+            console.log('Menghapus siswa dengan ID:', siswaToDelete.id);
+    
             await deleteSiswa(siswaToDelete.id);
+    
+            // Tutup modal
             setShowDeleteModal(false);
             setSiswaToDelete(null);
-            fetchSiswaData();
+    
+            // Refresh data
+            await fetchSiswaData();
+    
         } catch (err) {
             console.error('Gagal menghapus data:', err);
-            alert('Gagal menghapus data dari database.');
+    
+            setErrorMsg(
+                err.response?.data?.message ||
+                'Gagal menghapus data dari database.'
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -174,12 +198,11 @@ export default function SiswaPage() {
                 {loading ? (
                     <p className="p-6 text-center text-gray-500">Memuat data...</p>
                 ) : (
-                    <Table 
-                        columns={columns} 
-                        data={siswaList} 
-                        // Tambahan opsional: Jika API mengembalikan tanggal utuh, bisa kamu potong di sini (row.tanggalLahir.split('T')[0])
-                        onEdit={(row) => handleOpenEditModal(row)} 
-                        onDelete={(row) => handleOpenDeleteModal(row)} 
+                    <Table
+                        columns={columns}
+                        data={siswaList}
+                        onEdit={handleOpenEditModal}
+                        onDelete={handleOpenDeleteModal}
                     />
                 )}
             </div>
