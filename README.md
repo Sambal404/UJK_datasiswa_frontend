@@ -1,16 +1,108 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📁 1. Struktur Folder Proyek Frontend
 
-Currently, two official plugins are available:
+Susunan folder dirancang modular agar mudah dibaca oleh penguji (asesor) dan menerapkan prinsip *Clean Code*:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```text
+src/
+├── assets/            # Gambar, logo, atau icon statis
+├── components/        # Reusable UI Components (Atom & Molecules)
+│   ├── Button.jsx     # Tombol aksi (Primary, Secondary, Danger)
+│   ├── InputField.jsx # Input teks, select, atau form kontrol
+│   └── Table.jsx      # Komponen tabel dinamis dengan aksi Edit/Delete
+├── pages/             # Halaman utama aplikasi (Smart Components)
+│   └── SiswaPage.jsx  # Halaman manajemen data Siswa & Jurusan
+├── services/          # Konfigurasi Axios dan komunikasi API Backend
+│   └── api.js         # Pengaturan baseURL dan endpoint handler
+├── App.jsx            # Root component yang merender halaman
+├── App.css            # Styling tambahan / Tailwind CSS directives
+└── main.js / main.jsx # Entry point aplikasi React
 
-## React Compiler
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ⚙️ 2. Cara Menjalankan Aplikasi Frontend
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Ikuti langkah-langkah berikut di terminal untuk menjalankan proyek React:
+
+1. **Buka Terminal** dan arahkan ke direktori folder frontend:
+```bash
+cd nama-folder-frontend
+
+```
+
+
+2. **Install Dependencies** (jika belum dilakukan):
+```bash
+npm install
+
+```
+
+
+3. **Konfigurasi URL Backend (`src/services/api.js`)**:
+Pastikan `baseURL` mengarah ke port backend Express Anda yang sedang aktif (misalnya port `3001`):
+```javascript
+import axios from 'axios';
+
+const api = axios.create({
+    baseURL: 'http://localhost:3001/api/v1', // Sesuaikan port backend
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
+export default api;
+
+```
+
+
+4. **Jalankan Development Server**:
+```bash
+npm run dev
+
+```
+
+
+5. Buka browser dan akses URL yang tertera di terminal (biasanya `http://localhost:5173`).
+
+---
+
+## 🚀 3. Fitur Utama & Cara Penggunaan
+
+Aplikasi frontend ini dirancang untuk menangani operasi **CRUD** (*Create, Read, Update, Delete*) secara interaktif dan *real-time* terintegrasi dengan backend API.
+
+### A. Fitur Menampilkan Data (`Read` & Pagination)
+
+* **Tabel Dinamis:** Data siswa atau jurusan akan dimuat ke dalam tabel rapi menggunakan komponen `Table.jsx`.
+* **Pencarian (Search):** Terdapat kolom input pencarian di bagian atas untuk memfilter data berdasarkan nama secara instan.
+* **Pagination:** Navigasi halaman (`Halaman Sebelumnya` / `Halaman Berikutnya`) untuk membatasi jumlah data yang tampil per halaman.
+
+### B. Fitur Tambah & Ubah Data (`Create` & `Update`)
+
+* **Form Input Terstruktur:** Menggunakan komponen `InputField.jsx` yang mendukung berbagai tipe data (teks, nomor telepon, pilihan dropdown/select).
+* **Modal / Form Sederhana:** Saat tombol **"Tambah Data"** diklik, form akan terbuka. Jika menekan tombol **"Edit"** pada baris tabel tertentu, form akan otomatis terisi data lama untuk diperbarui (*Pre-filled*).
+
+### C. Fitur Hapus Data (`Delete`)
+
+* **Konfirmasi Hapus:** Tombol hapus pada setiap baris tabel memicu dialog konfirmasi untuk mencegah kesalahan penghapusan data secara tidak disengaja.
+
+---
+
+## 🛠️ 4. Panduan Singkat Komponen Utama
+
+### 1. `Button.jsx` (Komponen Tombol)
+
+Digunakan untuk aksi interaktif dengan varian gaya:
+
+* `variant="primary"`: Warna utama (biasanya biru/hijau) untuk simpan/tambah.
+* `variant="secondary"`: Warna netral untuk batal/tutup.
+* `variant="danger"`: Warna merah untuk tombol hapus.
+
+### 2. `InputField.jsx` (Komponen Input Form)
+
+Mendukung atribut standar HTML seperti `label`, `name`, `type`, `value`, `onChange`, dan opsi pilihan untuk elemen `<select>`.
+
+### 3. `Table.jsx` (Komponen Tabel Data)
+
+Menerima props `columns` (judul kolom) dan `data` (array data dari backend), serta menyediakan tombol aksi bawaan untuk **Edit** dan **Delete** di setiap akhir baris data.
