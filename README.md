@@ -86,23 +86,3 @@ Aplikasi frontend ini dirancang untuk menangani operasi **CRUD** (*Create, Read,
 ### C. Fitur Hapus Data (`Delete`)
 
 * **Konfirmasi Hapus:** Tombol hapus pada setiap baris tabel memicu dialog konfirmasi untuk mencegah kesalahan penghapusan data secara tidak disengaja.
-
----
-
-## 🛠️ 4. Panduan Singkat Komponen Utama
-
-### 1. `Button.jsx` (Komponen Tombol)
-
-Digunakan untuk aksi interaktif dengan varian gaya:
-
-* `variant="primary"`: Warna utama (biasanya biru/hijau) untuk simpan/tambah.
-* `variant="secondary"`: Warna netral untuk batal/tutup.
-* `variant="danger"`: Warna merah untuk tombol hapus.
-
-### 2. `InputField.jsx` (Komponen Input Form)
-
-Mendukung atribut standar HTML seperti `label`, `name`, `type`, `value`, `onChange`, dan opsi pilihan untuk elemen `<select>`.
-
-### 3. `Table.jsx` (Komponen Tabel Data)
-
-Menerima props `columns` (judul kolom) dan `data` (array data dari backend), serta menyediakan tombol aksi bawaan untuk **Edit** dan **Delete** di setiap akhir baris data.
