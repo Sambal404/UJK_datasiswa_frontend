@@ -21,15 +21,18 @@ export default function SiswaPage() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [siswaToDelete, setSiswaToDelete] = useState(null);
 
+    // State system
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
+    // 1. UPDATE: Tambahkan tanggalLahir
     const initialFormState = {
         kodeSiswa: '',
         namaSiswa: '',
         phone: '',
         alamat: '',
-        jurusanId: 1 // Default untuk tampilan form
+        tanggalLahir: '', 
+        jurusanId: 1 // Default untuk tampilan select option
     };
     const [form, setForm] = useState(initialFormState);
 
@@ -53,7 +56,6 @@ export default function SiswaPage() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        // Konversi jurusanId menjadi angka (integer) agar sesuai dengan format database INT
         setForm({ 
             ...form, 
             [name]: name === 'jurusanId' ? parseInt(value) : value 
@@ -70,11 +72,19 @@ export default function SiswaPage() {
     const handleOpenEditModal = (siswa) => {
         setIsEditMode(true);
         setSelectedId(siswa.id);
+        
+        // 2. UPDATE: Format tanggal lahir dari DB (contoh "2005-12-01T...") menjadi YYYY-MM-DD
+        let formattedDate = '';
+        if (siswa.tanggalLahir) {
+            formattedDate = siswa.tanggalLahir.split('T')[0];
+        }
+
         setForm({
             kodeSiswa: siswa.kodeSiswa,
             namaSiswa: siswa.namaSiswa,
             phone: siswa.phone,
             alamat: siswa.alamat || '',
+            tanggalLahir: formattedDate, // Masukkan tanggal yang sudah diformat
             jurusanId: siswa.jurusanId || 1
         });
         setErrorMsg('');
@@ -122,9 +132,11 @@ export default function SiswaPage() {
         setPage(1);
     };
 
+    // 3. UPDATE: Tambahkan kolom tanggal lahir ke tabel
     const columns = [
         { header: 'Kode Siswa', accessor: 'kodeSiswa' },
         { header: 'Nama Siswa', accessor: 'namaSiswa' },
+        { header: 'Tgl Lahir', accessor: 'tanggalLahir' }, 
         { header: 'No. Telepon', accessor: 'phone' },
         { header: 'Alamat', accessor: 'alamat' },
         { header: 'Jurusan', accessor: 'namaJurusan' }
@@ -165,6 +177,7 @@ export default function SiswaPage() {
                     <Table 
                         columns={columns} 
                         data={siswaList} 
+                        // Tambahan opsional: Jika API mengembalikan tanggal utuh, bisa kamu potong di sini (row.tanggalLahir.split('T')[0])
                         onEdit={(row) => handleOpenEditModal(row)} 
                         onDelete={(row) => handleOpenDeleteModal(row)} 
                     />
@@ -197,7 +210,7 @@ export default function SiswaPage() {
             {/* Modal Form Tambah / Edit Siswa */}
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl overflow-y-auto max-h-screen">
                         <h2 className="text-xl font-bold mb-4">
                             {isEditMode ? 'Edit Data Siswa' : 'Tambah Siswa Baru'}
                         </h2>
@@ -225,6 +238,20 @@ export default function SiswaPage() {
                                 required 
                                 placeholder="Nama lengkap siswa"
                             />
+                            
+                            {/* 4. UPDATE: Tambahkan Input untuk Tanggal Lahir (type="date") */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                                <input 
+                                    type="date"
+                                    name="tanggalLahir"
+                                    value={form.tanggalLahir}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
                             <InputField 
                                 label="Nomor Telepon" 
                                 name="phone" 
@@ -273,6 +300,7 @@ export default function SiswaPage() {
             )}
 
             {/* Modal Konfirmasi Hapus Siswa */}
+            {/* ... Modal Delete Tetap Sama ... */}
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-xl text-center">
