@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import './App.css'
+import SiswaPage from './pages/SiswaPage'
 
 function App() {
   return (
     <>
-      <h1>Hello World!</h1>
+      <SiswaPage />
     </>
   )
 }
